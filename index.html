@@ -2276,21 +2276,24 @@
     background: #ffffff;
     border-left: 1px solid rgba(7,61,255,0.15);
     z-index: 500;
-    display: none;
+    display: flex;
     flex-direction: column;
     transform: translateX(100%);
-    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, visibility 0s 0.32s;
     pointer-events: none;
     border-radius: 0;
     overflow: hidden;
     box-shadow: -4px 0 24px rgba(1,20,86,0.1);
     opacity: 0;
+    visibility: hidden;
   }
   #state-slide-panel.open {
     display: flex;
     transform: translateX(0);
     pointer-events: all;
     opacity: 1;
+    visibility: visible;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, visibility 0s 0s;
   }
   .slide-panel-header {
     display: flex;
@@ -3558,6 +3561,10 @@ window.setNavStateChip = function(name) {
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       University Programs
     </button>
+    <button class="view-btn" id="btn-city-stories">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      City Stories
+    </button>
   </div>
 
   <div id="map-view">
@@ -3675,6 +3682,33 @@ window.setNavStateChip = function(name) {
       </div>
     </div>
   </div><!-- end #state-slide-panel -->
+  <!-- ═══════════════════════════════════════════════════════
+       CITY STORIES SLIDE PANEL
+       ═══════════════════════════════════════════════════════ -->
+  <div id="city-slide-panel" style="
+    position:fixed;top:0;right:0;width:660px;height:100vh;
+    background:#ffffff;border-left:1px solid rgba(19,234,157,0.25);
+    z-index:501;display:none;flex-direction:column;
+    transform:translateX(100%);
+    transition:transform 0.32s cubic-bezier(0.16,1,0.3,1),opacity 0.32s ease;
+    pointer-events:none;overflow:hidden;
+    box-shadow:-4px 0 24px rgba(1,20,86,0.12);opacity:0;">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid rgba(7,61,255,0.1);flex-shrink:0;background:#f8f9ff;">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(19,234,157,0.7);font-family:'DM Mono',monospace;margin-bottom:4px;">City Story</div>
+        <div style="font-size:18px;font-weight:700;color:#011456;font-family:'DM Serif Display',serif;" id="city-panel-name">Select a City</div>
+        <div style="font-size:13px;color:rgba(1,20,86,0.45);" id="city-panel-sub">Click a city dot on the map</div>
+      </div>
+      <button id="city-close-btn" title="Close" onclick="closeCityPanel()" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(7,61,255,0.15);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="#011456" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <!-- Scrollable content -->
+    <div id="city-panel-body" style="flex:1;overflow-y:auto;padding:0;"></div>
+  </div>
+
+
   </div><!-- end position:relative wrapper -->
   <!-- PROGRAMS TABLE PANEL — outside relative wrapper, inside #map-view -->
   <div id="uni-table-panel" style="display:none; margin-top:0;">
@@ -4669,208 +4703,512 @@ window.setNavStateChip = function(name) {
     </div><!-- end main card -->
   </div><!-- end quebec-case-study -->
 
+  <!-- ═══════════════════════════════════════════════════════
+       EPIC GAMES / NORTH CAROLINA CASE STUDY
+       ═══════════════════════════════════════════════════════ -->
+  <div id="epic-case-study" style="margin-top:64px;">
+
+    <!-- Section label -->
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+      <div style="width:3px;height:32px;background:linear-gradient(180deg,#13EA9D,rgba(19,234,157,0.2));border-radius:2px;"></div>
+      <div>
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#13EA9D;margin-bottom:3px;">The Anchor Effect</div>
+        <div style="font-size:14px;font-weight:600;color:var(--white);opacity:0.8;">One HQ decision. 25 years of compounding returns.</div>
+      </div>
+    </div>
+
+    <!-- Main case study card -->
+    <div style="border-radius:16px;overflow:hidden;position:relative;background:linear-gradient(148deg,#030E3A 0%,#041a2e 55%,#062a1a 100%);border:1px solid rgba(19,234,157,0.25);box-shadow:0 32px 80px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.06);">
+
+      <!-- Grid texture bg -->
+      <div style="position:absolute;inset:0;opacity:0.025;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,1) 0px,transparent 1px,transparent 56px),repeating-linear-gradient(90deg,rgba(255,255,255,1) 0px,transparent 1px,transparent 56px);pointer-events:none;"></div>
+
+      <!-- Teal glow -->
+      <div style="position:absolute;top:-80px;right:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(19,234,157,0.07) 0%,transparent 65%);pointer-events:none;"></div>
+      <div style="position:absolute;bottom:-80px;left:-40px;width:320px;height:320px;background:radial-gradient(circle,rgba(7,61,255,0.06) 0%,transparent 65%);pointer-events:none;"></div>
+
+      <!-- Header -->
+      <div style="padding:48px 52px 36px;border-bottom:1px solid rgba(255,255,255,0.06);position:relative;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:24px;">
+          <div style="flex:1;min-width:300px;">
+            <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;">
+              <span style="font-size:13px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);">Cary, North Carolina &nbsp;·&nbsp; 1999–Present &nbsp;·&nbsp; Anchor Company Effect</span>
+            </div>
+            <h3 style="font-family:'DM Serif Display',serif;font-size:30px;color:#fff;margin:0 0 16px;line-height:1.18;max-width:680px;">How a game developer's move to a <em style="color:#13EA9D;font-style:italic;">non-coastal college town</em> turned North Carolina into the nation's #6 video game state</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:640px;margin:0;">No targeted tax credit. No government incentive package. Just a founder who wanted to build in his home state — and 25 years of compounding economic returns that followed.</p>
+          </div>
+          <!-- NC stats badge -->
+          <div style="flex-shrink:0;background:rgba(19,234,157,0.08);border:1px solid rgba(19,234,157,0.2);border-radius:12px;padding:20px 28px;text-align:center;min-width:180px;">
+            <div style="font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(19,234,157,0.6);margin-bottom:6px;">NC Today · ESA 2026</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:42px;font-weight:700;color:#13EA9D;line-height:1;">#6</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px;">U.S. game state<br>by direct employment</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div style="padding:40px 52px 36px;border-bottom:1px solid rgba(255,255,255,0.06);">
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:24px;">25 Years of Compounding Growth</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;">
+
+          <div style="padding:20px 24px 20px 0;border-right:1px solid rgba(255,255,255,0.08);padding-right:24px;margin-right:24px;">
+            <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#13EA9D;margin-bottom:8px;">1991–1998</div>
+            <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:6px;">Founded in a basement</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.55;">Tim Sweeney starts Epic in Potomac, MD. Ships Jazz Jackrabbit, then Unreal — the engine that will power a generation of games.</div>
+          </div>
+
+          <div style="padding:20px 24px 20px 0;border-right:1px solid rgba(255,255,255,0.08);padding-right:24px;margin-right:24px;">
+            <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#13EA9D;margin-bottom:8px;">1999</div>
+            <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:6px;">The move to Cary</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.55;">Epic relocates HQ to Cary, NC — near NC State, Duke, and UNC. Sweeney's stated reason: talent, quality of life, and room to grow outside Silicon Valley.</div>
+          </div>
+
+          <div style="padding:20px 24px 20px 0;border-right:1px solid rgba(255,255,255,0.08);padding-right:24px;margin-right:24px;">
+            <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#13EA9D;margin-bottom:8px;">2000s–2010s</div>
+            <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:6px;">Cluster takes hold</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.55;">Red Storm Entertainment (Rainbow Six) already in Cary. Unreal Engine licensing seeds studios globally. NC universities launch game programs to serve the local industry pipeline.</div>
+          </div>
+
+          <div style="padding:20px 0;">
+            <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#13EA9D;margin-bottom:8px;">2017–Present</div>
+            <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:6px;">Fortnite. $20B+.</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.55;">Fortnite generates over $20B lifetime gross revenue. Epic reaches 5,000 employees. Disney invests $1.5B. NC's game industry becomes a $714M economic force.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- The numbers -->
+      <div style="padding:40px 52px 36px;border-bottom:1px solid rgba(255,255,255,0.06);">
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:20px;">What 25 Years Built · ESA 2026 Economic Impact Report</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+          <div style="background:rgba(19,234,157,0.07);border:1px solid rgba(19,234,157,0.18);border-radius:10px;padding:20px 18px;">
+            <div style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#13EA9D;line-height:1;margin-bottom:6px;">2,467</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.4;">direct game industry jobs in NC</div>
+          </div>
+          <div style="background:rgba(19,234,157,0.07);border:1px solid rgba(19,234,157,0.18);border-radius:10px;padding:20px 18px;">
+            <div style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#13EA9D;line-height:1;margin-bottom:6px;">6,717</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.4;">total jobs supported across the NC economy</div>
+          </div>
+          <div style="background:rgba(19,234,157,0.07);border:1px solid rgba(19,234,157,0.18);border-radius:10px;padding:20px 18px;">
+            <div style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#13EA9D;line-height:1;margin-bottom:6px;">$714M</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.4;">total economic output generated for NC</div>
+          </div>
+          <div style="background:rgba(19,234,157,0.07);border:1px solid rgba(19,234,157,0.18);border-radius:10px;padding:20px 18px;">
+            <div style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#13EA9D;line-height:1;margin-bottom:6px;">2.72×</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.4;">jobs multiplier — each direct job creates 1.72 more</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- The deeper story -->
+      <div style="padding:40px 52px 36px;border-bottom:1px solid rgba(255,255,255,0.06);display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+
+        <!-- Left: what this proves -->
+        <div>
+          <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(19,234,157,0.7);margin-bottom:16px;font-family:'DM Mono',monospace;">What This Proves for Policy</div>
+          <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.75;margin:0 0 14px;">North Carolina didn't offer a tax credit to recruit Epic. It offered something more durable: proximity to three world-class research universities, a low cost of doing business, and a state that didn't get in the way.</p>
+          <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.75;margin:0;">That one location decision seeded an entire regional industry. The lesson isn't "do what NC did" — it's that the right policy environment <em style="color:rgba(255,255,255,0.85);">attracts anchors</em>, and anchors <em style="color:rgba(255,255,255,0.85);">build ecosystems</em> that outlast any single company's fortunes.</p>
+        </div>
+
+        <!-- Right: the cluster effect -->
+        <div>
+          <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(19,234,157,0.7);margin-bottom:16px;font-family:'DM Mono',monospace;">The Cluster Effect</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:7px;">
+              <div style="width:6px;height:6px;background:#13EA9D;border-radius:50%;flex-shrink:0;margin-top:5px;"></div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;"><strong style="color:rgba(255,255,255,0.8);">Red Storm Entertainment</strong> — Tom Clancy's Rainbow Six birthplace, now Ubisoft Cary, still operating in the Triangle</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:7px;">
+              <div style="width:6px;height:6px;background:#13EA9D;border-radius:50%;flex-shrink:0;margin-top:5px;"></div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;"><strong style="color:rgba(255,255,255,0.8);">NC State, Duke &amp; UNC</strong> — all run game design and computer science programs directly feeding local studio pipelines</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:7px;">
+              <div style="width:6px;height:6px;background:#13EA9D;border-radius:50%;flex-shrink:0;margin-top:5px;"></div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;"><strong style="color:rgba(255,255,255,0.8);">ESA member companies</strong> account for a significant share of NC's top-tier game employment — among the highest member concentration nationally</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- The honest context -->
+      <div style="padding:28px 52px 40px;background:rgba(0,0,0,0.15);">
+        <div style="display:flex;align-items:flex-start;gap:16px;">
+          <div style="flex-shrink:0;width:3px;height:100%;background:rgba(255,255,255,0.12);border-radius:2px;align-self:stretch;"></div>
+          <div>
+            <div style="font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:8px;font-family:'DM Mono',monospace;">The Long View</div>
+            <p style="font-size:14px;color:rgba(255,255,255,0.45);line-height:1.75;margin:0;">Industries cycle. Studios open and close. Epic, like every game company, will navigate market shifts — including the industry-wide challenges facing the sector in 2025–2026. But the 2,467 direct jobs and $714M in economic output that North Carolina's game industry represents today didn't exist before 1999. The ecosystem Epic helped build — the university programs, the talent networks, the supplier companies, the second-generation studios — those remain. That is what smart location policy creates: resilience that outlasts any single product cycle.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end epic main card -->
+  </div><!-- end epic-case-study -->
+
 </section>
 
 <!-- BEYOND ECONOMICS -->
 <section id="beyond">
   <div class="section-eyebrow"><svg width="16" height="16" viewBox="0 0 26 26" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:7px;margin-top:-2px;"><path d="M13 21S3 14.5 3 8.5A5.5 5.5 0 0 1 13 6a5.5 5.5 0 0 1 10 2.5C23 14.5 13 21 13 21z" stroke="#6B2FCC" stroke-width="1.6"/><circle cx="11" cy="11" r="1.2" fill="#13EA9D"/><circle cx="15" cy="11" r="1.2" fill="#13EA9D"/><circle cx="13" cy="9" r="1.2" fill="#13EA9D"/><circle cx="13" cy="13" r="1.2" fill="#13EA9D"/></svg>The Human Side</div>
   <h2 class="section-title">Video games as a force for good.</h2>
-  <p class="section-intro">205 million Americans play video games — and the data shows they&#39;re getting real value from it. The 2025 ESA Essential Facts report finds broad agreement across every demographic that games improve well-being, build community, and develop life skills.</p>
+  <p class="section-intro">205 million Americans play video games — and the data shows they're getting real value from it. The 2025 ESA Essential Facts report finds broad agreement across every demographic that games improve well-being, build community, and develop life skills.</p>
 
-  <!-- HEADLINE STATS ROW -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;">
+  <!-- ══ ROW 1: THREE HERO DONUTS ══ -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:32px;">
 
-    <div style="background:linear-gradient(135deg,rgba(7,61,255,0.12),rgba(7,61,255,0.04));border:1px solid rgba(7,61,255,0.2);border-radius:12px;padding:24px 22px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#073DFF,rgba(7,61,255,0.2));"></div>
-      <div style="font-family:'DM Serif Display',serif;font-size:54px;font-weight:700;color:#073DFF;line-height:1;margin-bottom:8px;">84%</div>
-      <div style="font-size:13px;font-weight:600;color:var(--white);line-height:1.45;margin-bottom:6px;">of U.S. adults agree video games bring people joy through play</div>
-      <div style="font-size:13px;color:rgba(13,18,38,0.35);">ESA Essential Facts 2025 · U.S. adults 18+</div>
+    <div style="background:linear-gradient(145deg,rgba(7,61,255,0.12),rgba(7,61,255,0.04));border:1px solid rgba(7,61,255,0.22);border-radius:16px;padding:32px 24px;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#073DFF,transparent);"></div>
+      <div style="position:relative;width:140px;height:140px;margin-bottom:16px;">
+        <svg width="140" height="140" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(7,61,255,0.12)" stroke-width="9"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#073DFF" stroke-width="9" stroke-linecap="round"
+            stroke-dasharray="263.9" stroke-dashoffset="42.2"
+            transform="rotate(-90 50 50)"
+            style="transition:stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1);" data-target="42.2" data-full="263.9" class="donut-arc"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-family:'DM Serif Display',serif;font-size:28px;font-weight:700;color:#073DFF;line-height:1;">84%</div>
+        </div>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:var(--white);text-align:center;line-height:1.4;margin-bottom:6px;">Agree games bring joy through play</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);text-align:center;">U.S. adults 18+ · ESA 2025</div>
     </div>
 
-    <div style="background:linear-gradient(135deg,rgba(19,234,157,0.1),rgba(19,234,157,0.03));border:1px solid rgba(19,234,157,0.25);border-radius:12px;padding:24px 22px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#13EA9D,rgba(19,234,157,0.2));"></div>
-      <div style="font-family:'DM Serif Display',serif;font-size:54px;font-weight:700;color:#13EA9D;line-height:1;margin-bottom:8px;">81%</div>
-      <div style="font-size:13px;font-weight:600;color:var(--white);line-height:1.45;margin-bottom:6px;">agree video games provide stress relief</div>
-      <div style="font-size:13px;color:rgba(13,18,38,0.35);">ESA Essential Facts 2025 · U.S. adults 18+</div>
+    <div style="background:linear-gradient(145deg,rgba(19,234,157,0.09),rgba(19,234,157,0.02));border:1px solid rgba(19,234,157,0.22);border-radius:16px;padding:32px 24px;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#13EA9D,transparent);"></div>
+      <div style="position:relative;width:140px;height:140px;margin-bottom:16px;">
+        <svg width="140" height="140" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(19,234,157,0.12)" stroke-width="9"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#13EA9D" stroke-width="9" stroke-linecap="round"
+            stroke-dasharray="263.9" stroke-dashoffset="50.1"
+            transform="rotate(-90 50 50)"
+            style="transition:stroke-dashoffset 1.4s 0.15s cubic-bezier(0.4,0,0.2,1);" data-target="50.1" data-full="263.9" class="donut-arc"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-family:'DM Serif Display',serif;font-size:28px;font-weight:700;color:#13EA9D;line-height:1;">81%</div>
+        </div>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:var(--white);text-align:center;line-height:1.4;margin-bottom:6px;">Agree games provide stress relief</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);text-align:center;">U.S. adults 18+ · ESA 2025</div>
     </div>
 
-    <div style="background:linear-gradient(135deg,rgba(107,47,204,0.1),rgba(107,47,204,0.03));border:1px solid rgba(107,47,204,0.22);border-radius:12px;padding:24px 22px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6B2FCC,rgba(107,47,204,0.2));"></div>
-      <div style="font-family:'DM Serif Display',serif;font-size:54px;font-weight:700;color:#6B2FCC;line-height:1;margin-bottom:8px;">76%</div>
-      <div style="font-size:13px;font-weight:600;color:var(--white);line-height:1.45;margin-bottom:6px;">agree video games bring different types of people together</div>
-      <div style="font-size:13px;color:rgba(13,18,38,0.35);">ESA Essential Facts 2025 · U.S. adults 18+</div>
+    <div style="background:linear-gradient(145deg,rgba(107,47,204,0.10),rgba(107,47,204,0.03));border:1px solid rgba(107,47,204,0.22);border-radius:16px;padding:32px 24px;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6B2FCC,transparent);"></div>
+      <div style="position:relative;width:140px;height:140px;margin-bottom:16px;">
+        <svg width="140" height="140" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(107,47,204,0.12)" stroke-width="9"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#6B2FCC" stroke-width="9" stroke-linecap="round"
+            stroke-dasharray="263.9" stroke-dashoffset="63.3"
+            transform="rotate(-90 50 50)"
+            style="transition:stroke-dashoffset 1.4s 0.3s cubic-bezier(0.4,0,0.2,1);" data-target="63.3" data-full="263.9" class="donut-arc"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-family:'DM Serif Display',serif;font-size:28px;font-weight:700;color:#6B2FCC;line-height:1;">76%</div>
+        </div>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:var(--white);text-align:center;line-height:1.4;margin-bottom:6px;">Agree games bring different people together</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);text-align:center;">U.S. adults 18+ · ESA 2025</div>
     </div>
 
   </div>
 
-  <!-- WHAT ADULTS AGREE ON — full grid -->
-  <div style="margin-bottom:40px;">
-    <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(13,18,38,0.35);margin-bottom:16px;font-family:'DM Mono',monospace;">What U.S. adults agree video games do · ESA Essential Facts 2025</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-
-      <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:#13EA9D;flex-shrink:0;min-width:44px;">81%</div>
-        <div style="font-size:13px;color:var(--white-dim);line-height:1.45;">Provide mental stimulation</div>
+  <!-- ══ ROW 2: HORIZONTAL BAR CHART — SKILLS ══ -->
+  <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:16px;padding:32px 36px;margin-bottom:24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace;margin-bottom:4px;">What U.S. Adults Agree Video Games Can Do</div>
+        <div style="font-size:15px;font-weight:700;color:var(--white);">Skills &amp; Benefits Americans Attribute to Gaming</div>
       </div>
-      <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:#13EA9D;flex-shrink:0;min-width:44px;">79%</div>
-        <div style="font-size:13px;color:var(--white-dim);line-height:1.45;">Provide accessible experiences for people with different abilities</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;">ESA Essential Facts 2025 · U.S. adults 18+</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;" id="skills-bars">
+      <div style="display:grid;grid-template-columns:220px 1fr 44px;align-items:center;gap:14px;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.65);">Provide mental stimulation</div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:4px;height:10px;overflow:hidden;"><div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,#073DFF,#4A7DFF);border-radius:4px;" data-w="81"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#073DFF;text-align:right;">81%</div>
       </div>
-      <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:#13EA9D;flex-shrink:0;min-width:44px;">77%</div>
-        <div style="font-size:13px;color:var(--white-dim);line-height:1.45;">Help improve cognitive skills</div>
+      <div style="display:grid;grid-template-columns:220px 1fr 44px;align-items:center;gap:14px;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.65);">Accessible for different abilities</div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:4px;height:10px;overflow:hidden;"><div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,#073DFF,#4A7DFF);border-radius:4px;" data-w="79"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#073DFF;text-align:right;">79%</div>
       </div>
-      <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:#F7941D;flex-shrink:0;min-width:44px;">78%</div>
-        <div style="font-size:13px;color:var(--white-dim);line-height:1.45;">Can teach problem-solving skills</div>
+      <div style="display:grid;grid-template-columns:220px 1fr 44px;align-items:center;gap:14px;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.65);">Teach problem-solving skills</div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:4px;height:10px;overflow:hidden;"><div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,#F7941D,#FFBE5C);border-radius:4px;" data-w="78"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#F7941D;text-align:right;">78%</div>
       </div>
-      <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:#F7941D;flex-shrink:0;min-width:44px;">69%</div>
-        <div style="font-size:13px;color:var(--white-dim);line-height:1.45;">Can teach teamwork &amp; collaboration skills</div>
+      <div style="display:grid;grid-template-columns:220px 1fr 44px;align-items:center;gap:14px;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.65);">Help improve cognitive skills</div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:4px;height:10px;overflow:hidden;"><div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,#F7941D,#FFBE5C);border-radius:4px;" data-w="77"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#F7941D;text-align:right;">77%</div>
       </div>
-      <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
-        <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:#F7941D;flex-shrink:0;min-width:44px;">60%</div>
-        <div style="font-size:13px;color:var(--white-dim);line-height:1.45;">Can teach adaptability and resilience</div>
+      <div style="display:grid;grid-template-columns:220px 1fr 44px;align-items:center;gap:14px;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.65);">Teach teamwork &amp; collaboration</div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:4px;height:10px;overflow:hidden;"><div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,#6B2FCC,#A66FFF);border-radius:4px;" data-w="69"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#6B2FCC;text-align:right;">69%</div>
       </div>
-
+      <div style="display:grid;grid-template-columns:220px 1fr 44px;align-items:center;gap:14px;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.65);">Teach adaptability &amp; resilience</div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:4px;height:10px;overflow:hidden;"><div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,#6B2FCC,#A66FFF);border-radius:4px;" data-w="60"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#6B2FCC;text-align:right;">60%</div>
+      </div>
     </div>
   </div>
 
-  <!-- CONNECTION & COMMUNITY -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:40px;">
+  <!-- ══ ROW 3: CONNECTION + FAMILIES ══ -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
 
-    <div style="background:rgba(7,61,255,0.07);border:1px solid rgba(7,61,255,0.18);border-radius:12px;padding:28px 26px;">
-      <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(7,61,255,0.6);margin-bottom:18px;font-family:'DM Mono',monospace;">Connection &amp; Community</div>
+    <!-- Connection bars -->
+    <div style="background:rgba(7,61,255,0.07);border:1px solid rgba(7,61,255,0.18);border-radius:16px;padding:28px 26px;">
+      <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(7,61,255,0.7);margin-bottom:20px;font-family:'DM Mono',monospace;">Connection &amp; Community</div>
       <div style="display:flex;flex-direction:column;gap:14px;">
-        <div style="display:flex;align-items:baseline;gap:12px;">
-          <span style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#073DFF;flex-shrink:0;">89%</span>
-          <span style="font-size:13px;color:var(--white-dim);line-height:1.5;">of players have played online — connecting across cities, states, and generations</span>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.55);">Have played online</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:#073DFF;">89%</span>
+          </div>
+          <div style="background:rgba(7,61,255,0.15);border-radius:3px;height:22px;overflow:hidden;position:relative;">
+            <div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,rgba(7,61,255,0.8),rgba(7,61,255,0.45));border-radius:3px;transition:width 1s 0s ease-out;" data-w="89"></div>
+          </div>
         </div>
-        <div style="display:flex;align-items:baseline;gap:12px;">
-          <span style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#073DFF;flex-shrink:0;">78%</span>
-          <span style="font-size:13px;color:var(--white-dim);line-height:1.5;">agree games can introduce people to new friends and relationships</span>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.55);">Games introduce people to new friends</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:#073DFF;">78%</span>
+          </div>
+          <div style="background:rgba(7,61,255,0.15);border-radius:3px;height:22px;overflow:hidden;">
+            <div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,rgba(7,61,255,0.75),rgba(7,61,255,0.35));border-radius:3px;transition:width 1s 0.1s ease-out;" data-w="78"></div>
+          </div>
         </div>
-        <div style="display:flex;align-items:baseline;gap:12px;">
-          <span style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#073DFF;flex-shrink:0;">49%</span>
-          <span style="font-size:13px;color:var(--white-dim);line-height:1.5;">say video games have helped them stay connected to friends and family</span>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.55);">Games help stay connected to loved ones</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:#073DFF;">49%</span>
+          </div>
+          <div style="background:rgba(7,61,255,0.15);border-radius:3px;height:22px;overflow:hidden;">
+            <div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,rgba(7,61,255,0.7),rgba(7,61,255,0.3));border-radius:3px;transition:width 1s 0.2s ease-out;" data-w="49"></div>
+          </div>
         </div>
-        <div style="display:flex;align-items:baseline;gap:12px;">
-          <span style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#073DFF;flex-shrink:0;">39%</span>
-          <span style="font-size:13px;color:var(--white-dim);line-height:1.5;">have met a good friend, spouse, or significant other through video games</span>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.55);">Met a close friend / partner through games</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:#073DFF;">39%</span>
+          </div>
+          <div style="background:rgba(7,61,255,0.15);border-radius:3px;height:22px;overflow:hidden;">
+            <div class="bar-viz" style="height:100%;width:0%;background:linear-gradient(90deg,rgba(7,61,255,0.65),rgba(7,61,255,0.25));border-radius:3px;transition:width 1s 0.3s ease-out;" data-w="39"></div>
+          </div>
         </div>
       </div>
-      <div style="margin-top:14px;font-size:13px;color:rgba(13,18,38,0.3);">ESA Essential Facts 2025</div>
+      <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,0.28);">ESA Essential Facts 2025</div>
     </div>
 
-    <div style="background:rgba(247,148,29,0.07);border:1px solid rgba(247,148,29,0.22);border-radius:12px;padding:28px 26px;">
-      <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(247,148,29,0.7);margin-bottom:18px;font-family:'DM Mono',monospace;">Families &amp; Generations</div>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div style="display:flex;align-items:baseline;gap:12px;">
-          <span style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#F7941D;flex-shrink:0;">82%</span>
-          <span style="font-size:13px;color:var(--white-dim);line-height:1.5;">of parents who play games play with their kids — making it a family activity</span>
+    <!-- Families -->
+    <div style="background:rgba(247,148,29,0.06);border:1px solid rgba(247,148,29,0.2);border-radius:16px;padding:28px 26px;">
+      <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(247,148,29,0.7);margin-bottom:20px;font-family:'DM Mono',monospace;">Families &amp; Generations</div>
+
+      <!-- Age distribution visual -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.1em;">Who plays — by age group</div>
+        <div style="display:flex;border-radius:6px;overflow:hidden;height:28px;gap:1px;">
+          <div style="width:18%;background:#13EA9D;display:flex;align-items:center;justify-content:center;"><span style="font-size:11px;font-weight:700;color:#011456;">18%</span></div>
+          <div style="width:23%;background:#073DFF;display:flex;align-items:center;justify-content:center;"><span style="font-size:11px;font-weight:700;color:#fff;">23%</span></div>
+          <div style="width:20%;background:#6B2FCC;display:flex;align-items:center;justify-content:center;"><span style="font-size:11px;font-weight:700;color:#fff;">20%</span></div>
+          <div style="width:29%;background:#F7941D;display:flex;align-items:center;justify-content:center;"><span style="font-size:11px;font-weight:700;color:#fff;">29%</span></div>
+          <div style="flex:1;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;"><span style="font-size:10px;color:rgba(255,255,255,0.4);">other</span></div>
         </div>
-        <div style="display:flex;align-items:baseline;gap:12px;">
-          <span style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#F7941D;flex-shrink:0;">55%</span>
-          <span style="font-size:13px;color:var(--white-dim);line-height:1.5;">of Gen Alpha plays video games with their parents</span>
-        </div>
-        <div style="display:flex;align-items:baseline;gap:12px;">
-          <span style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#F7941D;flex-shrink:0;">55%</span>
-          <span style="font-size:13px;color:var(--white-dim);line-height:1.5;">of all players play with others weekly — not just playing alone</span>
-        </div>
-        <div style="display:flex;align-items:baseline;gap:12px;">
-          <span style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:#F7941D;flex-shrink:0;">29%</span>
-          <span style="font-size:13px;color:var(--white-dim);line-height:1.5;">of all players are age 50 or older — more than the share under 18</span>
+        <div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:#13EA9D;border-radius:2px;display:inline-block;"></span>Under 18</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:#073DFF;border-radius:2px;display:inline-block;"></span>18–34</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:#6B2FCC;border-radius:2px;display:inline-block;"></span>35–49</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:#F7941D;border-radius:2px;display:inline-block;"></span>50+</span>
         </div>
       </div>
-      <div style="margin-top:14px;font-size:13px;color:rgba(13,18,38,0.3);">ESA Essential Facts 2025</div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.07);">
+          <span style="font-family:'DM Serif Display',serif;font-size:32px;font-weight:700;color:#F7941D;line-height:1;flex-shrink:0;">82%</span>
+          <span style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.45;">of gaming parents play with their kids</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.07);">
+          <span style="font-family:'DM Serif Display',serif;font-size:32px;font-weight:700;color:#F7941D;line-height:1;flex-shrink:0;">55%</span>
+          <span style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.45;">of Gen Alpha plays games with parents</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:10px;">
+          <span style="font-family:'DM Serif Display',serif;font-size:32px;font-weight:700;color:#F7941D;line-height:1;flex-shrink:0;">29%</span>
+          <span style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.45;">of all players are 50 or older — more than under 18</span>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.28);">ESA Essential Facts 2025</div>
     </div>
 
   </div>
 
-  <!-- VETERANS + ACCESSIBILITY ROW -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:40px;">
-    <div style="background:rgba(148,74,255,0.07);border:1px solid rgba(148,74,255,0.22);border-radius:10px;padding:20px 18px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--purple);opacity:0.7;"></div>
-      <div style="font-family:'DM Serif Display',serif;font-size:40px;font-weight:700;color:#6B2FCC;line-height:1;margin-bottom:8px;">86%</div>
-      <div style="font-size:13px;font-weight:600;color:var(--white);line-height:1.4;margin-bottom:6px;">of veterans say games helped them cope with difficult times</div>
-      <div style="font-size:13px;color:rgba(13,18,38,0.3);font-style:italic;">ESA Veterans Study 2025 · n=1,604</div>
+  <!-- ══ ROW 4: VETERANS + ACCESSIBILITY + HIGHER ED ══ -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;">
+
+    <!-- Veterans donut -->
+    <div style="background:linear-gradient(145deg,rgba(107,47,204,0.10),rgba(107,47,204,0.03));border:1px solid rgba(107,47,204,0.22);border-radius:14px;padding:24px 22px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6B2FCC,transparent);"></div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:rgba(107,47,204,0.6);margin-bottom:16px;font-family:'DM Mono',monospace;">Veterans</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+        <div style="position:relative;width:80px;height:80px;flex-shrink:0;">
+          <svg width="80" height="80" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(107,47,204,0.15)" stroke-width="12"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#6B2FCC" stroke-width="12" stroke-linecap="round"
+              stroke-dasharray="263.9" stroke-dashoffset="37"
+              transform="rotate(-90 50 50)"
+              style="transition:stroke-dashoffset 1.4s 0.2s ease-out;" data-target="37" data-full="263.9" class="donut-arc"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+            <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:700;color:#6B2FCC;">86%</div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.55;">of veterans say games helped them cope with difficult times</div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.28);font-style:italic;">ESA Veterans Study 2025 · n=1,604</div>
     </div>
-    <div style="background:rgba(19,234,157,0.07);border:1px solid rgba(19,234,157,0.2);border-radius:10px;padding:20px 18px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--teal);opacity:0.7;"></div>
-      <div style="font-family:'DM Serif Display',serif;font-size:40px;font-weight:700;color:#13EA9D;line-height:1;margin-bottom:8px;">21%</div>
-      <div style="font-size:13px;font-weight:600;color:var(--white);line-height:1.4;margin-bottom:6px;">of adult players report having a disability — games are one of the most accessible entertainment forms</div>
-      <div style="font-size:13px;color:rgba(13,18,38,0.3);font-style:italic;">ESA Essential Facts 2025</div>
+
+    <!-- Accessibility donut -->
+    <div style="background:linear-gradient(145deg,rgba(19,234,157,0.08),rgba(19,234,157,0.02));border:1px solid rgba(19,234,157,0.2);border-radius:14px;padding:24px 22px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#13EA9D,transparent);"></div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:rgba(19,234,157,0.6);margin-bottom:16px;font-family:'DM Mono',monospace;">Accessibility</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+        <div style="position:relative;width:80px;height:80px;flex-shrink:0;">
+          <svg width="80" height="80" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(19,234,157,0.12)" stroke-width="12"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#13EA9D" stroke-width="12" stroke-linecap="round"
+              stroke-dasharray="263.9" stroke-dashoffset="211"
+              transform="rotate(-90 50 50)"
+              style="transition:stroke-dashoffset 1.4s 0.3s ease-out;" data-target="211" data-full="263.9" class="donut-arc"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+            <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:700;color:#13EA9D;">21%</div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.55;">of adult players report living with a disability — games are one of the most accessible entertainment forms</div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.28);font-style:italic;">ESA Essential Facts 2025</div>
     </div>
-    <div style="background:rgba(247,148,29,0.07);border:1px solid rgba(247,148,29,0.22);border-radius:10px;padding:20px 18px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--amber);opacity:0.7;"></div>
+
+    <!-- Higher Ed -->
+    <div style="background:linear-gradient(145deg,rgba(247,148,29,0.09),rgba(247,148,29,0.02));border:1px solid rgba(247,148,29,0.22);border-radius:14px;padding:24px 22px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#F7941D,transparent);"></div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:rgba(247,148,29,0.6);margin-bottom:14px;font-family:'DM Mono',monospace;">Higher Education</div>
       <div style="font-family:'DM Serif Display',serif;font-size:40px;font-weight:700;color:#F7941D;line-height:1;margin-bottom:8px;">500+</div>
-      <div style="font-size:13px;font-weight:600;color:var(--white);line-height:1.4;margin-bottom:6px;">U.S. institutions with game design, programming &amp; esports programs across 49 states</div>
-      <div style="font-size:13px;color:rgba(13,18,38,0.3);font-style:italic;">NCES College Navigator 2024</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.55;margin-bottom:14px;">U.S. institutions with game design, programming, or esports programs across 49 states</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;color:rgba(255,255,255,0.45);">Game design programs</span>
+          <span style="font-size:12px;font-weight:700;color:#F7941D;font-family:'DM Mono',monospace;">330+</span>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:3px;height:6px;margin-bottom:4px;overflow:hidden;"><div class="bar-viz" style="height:100%;width:0%;background:#F7941D;border-radius:3px;" data-w="66"></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;color:rgba(255,255,255,0.45);">Game programming</span>
+          <span style="font-size:12px;font-weight:700;color:#F7941D;font-family:'DM Mono',monospace;">290+</span>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:3px;height:6px;margin-bottom:4px;overflow:hidden;"><div class="bar-viz" style="height:100%;width:0%;background:#F7941D;border-radius:3px;" data-w="58"></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;color:rgba(255,255,255,0.45);">Collegiate esports</span>
+          <span style="font-size:12px;font-weight:700;color:#F7941D;font-family:'DM Mono',monospace;">200+</span>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:3px;height:6px;overflow:hidden;"><div class="bar-viz" style="height:100%;width:0%;background:#F7941D;border-radius:3px;" data-w="40"></div></div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.28);font-style:italic;">NCES College Navigator 2024</div>
+    </div>
+
+  </div>
+
+  <!-- ══ ROW 5: SPORTS + CULTURE icon strip ══ -->
+  <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:14px;padding:28px 32px;margin-bottom:24px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:22px;font-family:'DM Mono',monospace;">Games &amp; Real Life · ESA Essential Facts 2025</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;align-items:start;">
+      <div style="border-right:1px solid rgba(255,255,255,0.07);padding-right:28px;">
+        <div style="font-size:28px;margin-bottom:8px;">🏈</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:44px;font-weight:700;color:#F7941D;line-height:1;margin-bottom:10px;">56%</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.55;">of players who play a real sport also play that sport as a video game</div>
+      </div>
+      <div style="border-right:1px solid rgba(255,255,255,0.07);padding:0 28px;">
+        <div style="font-size:28px;margin-bottom:8px;">🎮</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:44px;font-weight:700;color:#13EA9D;line-height:1;margin-bottom:10px;">87%</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.55;">believe playing a video game version of a sport improves real-life performance</div>
+      </div>
+      <div style="padding-left:28px;">
+        <div style="font-size:28px;margin-bottom:8px;">🎵</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:44px;font-weight:700;color:#6B2FCC;line-height:1;margin-bottom:10px;">22%</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.55;">of players discovered a new song or artist because of a video game they played</div>
+      </div>
     </div>
   </div>
 
-  <!-- SPORTS + CULTURE ROW -->
-  <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:12px;padding:28px 32px;margin-bottom:40px;">
-    <div style="font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(13,18,38,0.35);margin-bottom:18px;font-family:'DM Mono',monospace;">Games &amp; Real Life · ESA Essential Facts 2025</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
-      <div>
-        <div style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:var(--amber);line-height:1;margin-bottom:6px;">56%</div>
-        <div style="font-size:13px;color:var(--white-dim);line-height:1.5;">of players who play sports in real life also play that same sport as a video game</div>
-      </div>
-      <div>
-        <div style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:var(--amber);line-height:1;margin-bottom:6px;">87%</div>
-        <div style="font-size:13px;color:var(--white-dim);line-height:1.5;">believe playing a video game version of a sport improves real-life performance</div>
-      </div>
-      <div>
-        <div style="font-family:'DM Serif Display',serif;font-size:36px;font-weight:700;color:var(--amber);line-height:1;margin-bottom:6px;">22%</div>
-        <div style="font-size:13px;color:var(--white-dim);line-height:1.5;">of players discovered a new song because of a video game they played</div>
-      </div>
-    </div>
-  </div>
+  <!-- ══ ROW 6: K-12 EDUCATION ══ -->
+  <div class="veterans-banner animate-in" style="display:block;margin-top:0;border-color:rgba(107,47,204,0.18);background:#ffffff;box-shadow:0 2px 16px rgba(1,20,86,0.07);">
 
-  <!-- Education Banner — ESA Power of Video Games in Education 2025 -->
-  <div class="veterans-banner animate-in" style="display:block; margin-top:32px; border-color:rgba(107,47,204,0.18); background:#ffffff; box-shadow:0 2px 16px rgba(1,20,86,0.07);">
-    <!-- Top row: intro + two headline stats -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;margin-bottom:16px;">
+    <div style="display:grid;grid-template-columns:1fr auto;gap:40px;align-items:start;margin-bottom:24px;">
       <div>
-        <div class="section-eyebrow" style="margin-bottom:12px;color:#6B2FCC;">Video Games in K-12 Education</div>
+        <div class="section-eyebrow" style="margin-bottom:12px;color:#6B2FCC;">Video Games in K–12 Education</div>
         <div class="vet-title">Game-based learning is mainstream in American classrooms.</div>
-        <div class="vet-desc">From K-8 classrooms to university labs, educators have embraced video games as powerful tools for engagement, skill-building, and preparation for STEM careers. Research confirms lasting benefits across cognition, collaboration, and creativity.</div>
+        <div class="vet-desc">From K-8 classrooms to university labs, educators have embraced video games as powerful tools for engagement, skill-building, and STEM preparation.</div>
         <div style="margin-top:12px;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(1,20,86,0.35);font-family:'DM Mono',monospace;">ESA Power of Video Games in Education 2025</div>
       </div>
-      <div class="vet-stat">
-        <div class="vet-pct" style="color:#6B2FCC;">74%</div>
-        <div class="vet-label">of K-8 teachers use video games to teach lessons in their classroom</div>
-      </div>
-      <div class="vet-stat">
-        <div class="vet-pct" style="color:#6B2FCC;">72%</div>
-        <div class="vet-label">of K-12 teachers say video games have a positive impact in the classroom</div>
+      <!-- Two mini donut rings side by side -->
+      <div style="display:flex;gap:20px;flex-shrink:0;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div style="position:relative;width:88px;height:88px;">
+            <svg width="88" height="88" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(107,47,204,0.1)" stroke-width="10"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#6B2FCC" stroke-width="10" stroke-linecap="round"
+                stroke-dasharray="263.9" stroke-dashoffset="68.6"
+                transform="rotate(-90 50 50)"
+                style="transition:stroke-dashoffset 1.4s 0.4s ease-out;" data-target="68.6" data-full="263.9" class="donut-arc"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+              <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:700;color:#6B2FCC;">74%</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:rgba(1,20,86,0.6);text-align:center;max-width:80px;line-height:1.3;">K-8 teachers use games to teach</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div style="position:relative;width:88px;height:88px;">
+            <svg width="88" height="88" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(107,47,204,0.1)" stroke-width="10"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#6B2FCC" stroke-width="10" stroke-linecap="round"
+                stroke-dasharray="263.9" stroke-dashoffset="73.9"
+                transform="rotate(-90 50 50)"
+                style="transition:stroke-dashoffset 1.4s 0.55s ease-out;" data-target="73.9" data-full="263.9" class="donut-arc"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+              <div style="font-family:'DM Serif Display',serif;font-size:18px;font-weight:700;color:#6B2FCC;">72%</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:rgba(1,20,86,0.6);text-align:center;max-width:80px;line-height:1.3;">say games have positive classroom impact</div>
+        </div>
       </div>
     </div>
 
-    <!-- Bottom: 2-column data grid -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-      <div style="display:flex;flex-direction:column;">
-        <div style="font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(1,20,86,0.4);margin-bottom:12px;font-family:'DM Mono',monospace;">STEM Pipeline</div>
-        <div style="flex:1;background:rgba(107,47,204,0.06);border:1px solid rgba(107,47,204,0.15);border-radius:8px;padding:24px 22px;display:flex;flex-direction:column;justify-content:center;">
-          <div style="font-family:'DM Serif Display',serif;font-size:72px;font-weight:700;color:#6B2FCC;line-height:1;margin-bottom:16px;">3×</div>
-          <div style="font-size:15px;color:#011456;line-height:1.5;font-weight:700;margin-bottom:10px;">Girls who play video games are three times more likely to pursue STEM careers</div>
-          <div style="height:3px;background:linear-gradient(90deg,rgba(107,47,204,0.5),rgba(107,47,204,0.1));border-radius:2px;margin-bottom:12px;"></div>
-          <div style="font-size:13px;color:rgba(1,20,86,0.5);line-height:1.6;">than girls who don't play video games. Games build spatial reasoning, computational thinking, and problem-solving skills — the foundation of STEM careers.</div>
-          <div style="margin-top:12px;font-size:13px;color:rgba(1,20,86,0.35);font-family:'DM Mono',monospace;font-weight:600;">ESA Education Facts 2025</div>
+      <div style="background:rgba(107,47,204,0.06);border:1px solid rgba(107,47,204,0.15);border-radius:8px;padding:22px;display:flex;align-items:center;gap:20px;">
+        <div style="flex-shrink:0;text-align:center;">
+          <div style="font-family:'DM Serif Display',serif;font-size:52px;font-weight:700;color:#6B2FCC;line-height:1;">3×</div>
+          <div style="font-size:12px;color:rgba(1,20,86,0.45);margin-top:2px;">more likely</div>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#011456;margin-bottom:6px;line-height:1.35;">Girls who play games are 3× more likely to pursue STEM careers</div>
+          <div style="font-size:13px;color:rgba(1,20,86,0.5);line-height:1.5;">than girls who don't. Games build spatial reasoning, computational thinking, and problem-solving skills.</div>
         </div>
       </div>
       <div>
-        <div style="font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(1,20,86,0.4);margin-bottom:12px;font-family:'DM Mono',monospace;">How Games Help Teachers</div>
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(1,20,86,0.4);margin-bottom:10px;font-family:'DM Mono',monospace;">How Games Help Teachers</div>
         <div style="display:flex;flex-direction:column;gap:6px;">
-          <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f4ff;border-radius:5px;"><span style="font-size:16px;">🎯</span><span style="font-size:13px;color:#011456;font-weight:500;">Motivate students</span></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f4ff;border-radius:5px;"><span style="font-size:16px;">📊</span><span style="font-size:13px;color:#011456;font-weight:500;">Differentiate instruction for varying skill levels</span></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f4ff;border-radius:5px;"><span style="font-size:16px;">🧩</span><span style="font-size:13px;color:#011456;font-weight:500;">Simplify complex topics</span></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f4ff;border-radius:5px;"><span style="font-size:16px;">🤝</span><span style="font-size:13px;color:#011456;font-weight:500;">Foster collaboration and social skills</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f4ff;border-radius:5px;"><span style="font-size:15px;">🎯</span><span style="font-size:13px;color:#011456;font-weight:500;">Motivate students</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f4ff;border-radius:5px;"><span style="font-size:15px;">📊</span><span style="font-size:13px;color:#011456;font-weight:500;">Differentiate instruction for varying skill levels</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f4ff;border-radius:5px;"><span style="font-size:15px;">🧩</span><span style="font-size:13px;color:#011456;font-weight:500;">Simplify complex topics</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f4ff;border-radius:5px;"><span style="font-size:15px;">🤝</span><span style="font-size:13px;color:#011456;font-weight:500;">Foster collaboration and social skills</span></div>
         </div>
-        <div style="margin-top:8px;font-size:13px;color:rgba(1,20,86,0.35);">K-12 teacher survey · ESA Education Facts 2025</div>
+        <div style="margin-top:8px;font-size:12px;color:rgba(1,20,86,0.35);">K-12 teacher survey · ESA Education Facts 2025</div>
       </div>
     </div>
+
   </div>
 
   <div class="esa-quote animate-in" style="margin-bottom:0;">
@@ -4881,9 +5219,58 @@ window.setNavStateChip = function(name) {
     </div>
   </div>
 
-  <p class="data-note" style="margin-top:8px;">Sources: ESA 2025 Essential Facts About the U.S. Video Game Industry · ESA Power of Video Games in Education 2025 · ESA Veterans Study 2025 · NCES College Navigator July 2024 · Level Up Learning national survey</p>
+  <p class="data-note" style="margin-top:8px;">Sources: ESA 2025 Essential Facts About the U.S. Video Game Industry · ESA Power of Video Games in Education 2025 · ESA Veterans Study 2025 · NCES College Navigator July 2024</p>
+
+  <!-- IntersectionObserver to trigger animations when section scrolls into view -->
+  <script>
+  (function() {
+    function animateBeyond() {
+      // Animate donut arcs: set stroke-dashoffset from full circle to target
+      document.querySelectorAll('.donut-arc').forEach(function(arc) {
+        var full = parseFloat(arc.getAttribute('data-full') || 263.9);
+        arc.style.strokeDashoffset = full; // start hidden
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            arc.style.strokeDashoffset = arc.getAttribute('data-target');
+          });
+        });
+      });
+      // Animate bars
+      document.querySelectorAll('.bar-viz').forEach(function(bar) {
+        bar.style.width = '0%';
+        var target = bar.getAttribute('data-w') + '%';
+        var delay = parseFloat(bar.style.transition.match(/[\d.]+s\s+([\d.]+)s/) ? bar.style.transition.match(/[\d.]+s\s+([\d.]+)s/)[1] : 0) * 1000;
+        setTimeout(function() {
+          bar.style.transition = bar.style.transition || 'width 1s ease-out';
+          bar.style.width = target;
+        }, delay || 50);
+      });
+    }
+
+    // Use IntersectionObserver if available
+    if ('IntersectionObserver' in window) {
+      var beyondSection = document.getElementById('beyond');
+      var triggered = false;
+      var obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting && !triggered) {
+            triggered = true;
+            animateBeyond();
+            obs.disconnect();
+          }
+        });
+      }, { threshold: 0.05 });
+      if (beyondSection) obs.observe(beyondSection);
+    } else {
+      // Fallback: run after short delay
+      setTimeout(animateBeyond, 500);
+    }
+  })();
+  </script>
 
 </section>
+
+
 
 <section id="efficiency" style="display:none;">>
   <div class="section-eyebrow">
@@ -5878,6 +6265,7 @@ async function initMap() {
   const projection = d3.geoAlbersUsa()
     .scale(W * 1.25)
     .translate([W / 2, H / 2]);
+  window._mapProjection = projection;
 
   const path = d3.geoPath().projection(projection);
 
@@ -6641,6 +7029,12 @@ function updateStateCard(name) {
           <div class="state-card-sub" style="font-size:13px;color:rgba(1,20,86,0.4);letter-spacing:0.09em;text-transform:uppercase;">${d.abbr} · ESA 2026</div>
         </div>
         <div style="display:flex;gap:5px;flex-shrink:0;">
+          ${(typeof STATE_STORIES !== 'undefined' && STATE_STORIES[name] && STATE_STORIES[name].length) ? `<button onclick="window.openStoryTab('${name}')"
+            style="display:flex;align-items:center;gap:4px;padding:5px 10px;background:rgba(19,234,157,0.12);border:1px solid rgba(19,234,157,0.35);border-radius:5px;color:#0A8A5E;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.03em;transition:all 0.2s;white-space:nowrap;"
+            title="View stories from ${name}">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Stories
+          </button>` : ''}
           <button onclick="window.printStateProfile('${name}')"
             style="display:flex;align-items:center;gap:4px;padding:5px 10px;background:#073DFF;border:none;border-radius:5px;color:#ffffff;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.03em;transition:background 0.2s;white-space:nowrap;"
             title="Print one-pager for ${name}">
@@ -7173,8 +7567,9 @@ window.showRemoteStory = function(stateName, remoteShare, remoteWorkers, directJ
 // ===================================================
 window.setView = function(view) {
   // Button states
-  ['btn-map-view','btn-table-view','btn-programs-table'].forEach(id => {
-    document.getElementById(id).classList.remove('active');
+  ['btn-map-view','btn-table-view','btn-programs-table','btn-city-stories'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
   });
 
   const mapView   = document.getElementById('map-view');
@@ -7188,6 +7583,11 @@ window.setView = function(view) {
   if (view !== 'map' && slidePanel) slidePanel.classList.remove('open');
   // Hide companies panel on non-map views
   if (view !== 'map' && scPanel) scPanel.classList.remove('visible');
+  // Reset city stories button style when switching away
+  const csBtn = document.getElementById('btn-city-stories');
+  if (csBtn && view !== 'map') {
+    csBtn.classList.remove('active');
+  }
 
   if (view === 'map') {
     mapView.style.display = '';
@@ -9342,6 +9742,23 @@ function renderStoryTab(stateName) {
   }).join('');
 }
 
+// ── Open slide panel directly to the Story tab ──
+window.openStoryTab = function(stateName) {
+  // Make sure the state card is updated (triggers slide panel open)
+  if (typeof window.updateStateCard === 'function') {
+    window.updateStateCard(stateName);
+  }
+  // Switch to story tab after a short delay to ensure panel is open
+  setTimeout(() => {
+    document.querySelectorAll('.slide-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.slide-tab-panel').forEach(p => p.classList.remove('active'));
+    const storyBtn = document.querySelector('.slide-tab[data-tab="story"]');
+    if (storyBtn) storyBtn.classList.add('active');
+    const storyPanel = document.getElementById('slide-tab-story');
+    if (storyPanel) storyPanel.classList.add('active');
+  }, 80);
+};
+
 function ordinalSuffix(n) {
   const s = ['th','st','nd','rd'], v = n % 100;
   return n + (s[(v-20)%10] || s[v] || s[0]);
@@ -9594,11 +10011,6 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') qbClo
   document.getElementById('slide-close-btn').addEventListener('click', () => {
     const panel = document.getElementById('state-slide-panel');
     panel.classList.remove('open');
-    // Hide the panel after transition completes
-    panel.addEventListener('transitionend', function handler() {
-      if (!panel.classList.contains('open')) panel.style.display = 'none';
-      panel.removeEventListener('transitionend', handler);
-    });
     // Clear nav state chip
     const chip = document.getElementById('nav-state-chip');
     if (chip) chip.style.display = 'none';
@@ -9780,10 +10192,9 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') qbClo
     // ── Story tab ────────────────────────────────────────────
     renderStoryTab(name);
 
-    panel.style.display = 'flex';
-    // Trigger reflow so transition fires
-    panel.offsetHeight;
-    panel.classList.add('open');
+    requestAnimationFrame(() => {
+      panel.classList.add('open');
+    });
     // Reset to econ tab
     document.querySelectorAll('.slide-tab').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.slide-tab-panel').forEach(p => p.classList.remove('active'));
@@ -10396,6 +10807,403 @@ window.printStateProfile = function(stateName) {
     '</body></html>');
   printWin.document.close();
 };
+
+
+
+// ═══════════════════════════════════════════════════════════
+// CITY STORIES — data + rendering + panel
+// ═══════════════════════════════════════════════════════════
+
+const CITY_STORIES = [
+  {
+    id: 'cary-nc',
+    name: 'Cary, NC',
+    state: 'North Carolina',
+    lat: 35.791, lng: -78.781,
+    tag: 'The Anchor Effect',
+    tagColor: '#13EA9D',
+    headline: 'How one founder\'s homecoming turned a Research Triangle suburb into America\'s #6 game state',
+    stats: [
+      { n: '2,467', label: 'Direct game jobs in NC', color: '#13EA9D' },
+      { n: '6,717', label: 'Total jobs supported', color: '#13EA9D' },
+      { n: '$714M', label: 'Economic output', color: '#13EA9D' },
+      { n: '2.72×', label: 'Jobs multiplier', color: '#13EA9D' }
+    ],
+    story: `<p>In 1999, Epic Games — creator of the Unreal Engine — moved its headquarters from suburban Maryland to Cary, NC. Founder Tim Sweeney grew up in North Carolina and wanted to build near the Research Triangle's universities: NC State, Duke, and UNC-Chapel Hill. There was no tax credit. No government incentive package. Just a founder choosing his home state over Silicon Valley.</p>
+    <p>Twenty-five years later, that single location decision has compounded into North Carolina's rank as the <strong>#6 video game employment state in the country</strong>. Fortnite — built in Cary — generated over $20 billion in lifetime gross revenue. Disney invested $1.5 billion in Epic in 2024. At its peak, Epic employed around 5,000 people globally, with its largest single-site presence in Cary.</p>
+    <p>Red Storm Entertainment, birthplace of the Rainbow Six franchise (now Ubisoft Cary), was already in the Triangle before Epic arrived. Together they seeded a cluster: game design and programming programs at NC State, Duke, and UNC followed. A generation of Triangle-educated developers stayed local. More studios followed the talent.</p>
+    <p>The policy lesson is replicable: the Research Triangle's formula — world-class universities, affordable cost of living, no state income friction — made North Carolina a natural magnet for anchor companies that then build ecosystems. Those ecosystems are resilient to any single company's cycle.</p>`,
+    timeline: [
+      { year: '1991', event: 'Epic founded in Potomac, MD — ships Jazz Jackrabbit, then Unreal Engine' },
+      { year: '1999', event: 'HQ moves to Cary, NC — proximity to NC State, Duke & UNC cited' },
+      { year: '2006', event: 'Gears of War launches on Xbox 360, cementing Epic as a AAA powerhouse' },
+      { year: '2017', event: 'Fortnite launches free-to-play — becomes global phenomenon' },
+      { year: '2024', event: 'Disney invests $1.5B; Epic valued at $22B; NC game industry = $714M output' }
+    ],
+    source: 'ESA 2026 Economic Impact Report · TEConomy IMPLAN'
+  },
+  {
+    id: 'seattle-wa',
+    name: 'Seattle / Redmond, WA',
+    state: 'Washington',
+    lat: 47.608, lng: -122.335,
+    tag: 'The Epicenter',
+    tagColor: '#073DFF',
+    headline: 'The highest-concentration game metro in the world — built on one console bet and a Steam revolution',
+    stats: [
+      { n: '9,795', label: 'Direct game jobs in WA', color: '#073DFF' },
+      { n: '$4.96B', label: 'Economic output', color: '#073DFF' },
+      { n: '#2', label: 'U.S. game state by employment', color: '#073DFF' },
+      { n: '2.90×', label: 'Jobs multiplier', color: '#073DFF' }
+    ],
+    story: `<p>Washington State is the most game-dense major economy in the United States. Its anchor: Microsoft's Xbox division in Redmond, which launched the original Xbox in 2001 and has since acquired 343 Industries (Halo), The Coalition (Gears of War), and — after regulatory approval — Activision Blizzard. In 2023, that Activision deal alone added thousands of developers to Washington's game footprint.</p>
+    <p>But the Seattle story isn't only Microsoft. Valve Corporation — the Bellevue-based developer behind Half-Life, Portal, Counter-Strike, and the Steam digital distribution platform — commands 30%+ of global PC game distribution. Steam generated an estimated $1.5–2B in revenue in 2024. Nintendo of America's U.S. headquarters sits in Redmond, adjacent to Microsoft's campus.</p>
+    <p>Bungie — creator of the Halo franchise before departing Microsoft and launching Destiny — spent its formative years in Kirkland before Sony acquired it in 2022. That trajectory — Microsoft → indie → Sony acquisition — typifies the talent circulation that makes the Seattle ecosystem so productive. Engineers and designers cycle between anchor companies, founding studios, and being acquired back into the major players.</p>
+    <p>Washington's 9,795 direct game jobs and $4.96B in economic output reflect the deepest game cluster outside California. Unlike Los Angeles, Seattle built its industry almost entirely on tech-native companies rather than entertainment industry crossover.</p>`,
+    timeline: [
+      { year: '1996', event: 'Valve Corporation founded in Kirkland by former Microsoft employees' },
+      { year: '2001', event: 'Microsoft launches Xbox; Bungie (acquired) ships Halo: Combat Evolved' },
+      { year: '2003', event: 'Steam platform launches — quietly begins reshaping game distribution globally' },
+      { year: '2015', event: 'Valve\'s Steam reaches 125M accounts; becomes the dominant PC storefront' },
+      { year: '2023', event: 'Microsoft completes $69B Activision Blizzard acquisition; WA game cluster expands' }
+    ],
+    source: 'ESA 2026 Economic Impact Report · TEConomy IMPLAN'
+  },
+  {
+    id: 'los-angeles-ca',
+    name: 'Los Angeles, CA',
+    state: 'California',
+    lat: 34.052, lng: -118.244,
+    tag: 'The Creative Capital',
+    tagColor: '#6B2FCC',
+    headline: 'Where Hollywood meets gaming — LA\'s creative talent base built the industry\'s biggest franchises',
+    stats: [
+      { n: '36,217', label: 'Direct game jobs in CA', color: '#6B2FCC' },
+      { n: '$52.2B', label: 'Economic output (interstate)', color: '#6B2FCC' },
+      { n: '#1', label: 'U.S. game state — by every measure', color: '#6B2FCC' },
+      { n: '3.29×', label: 'Jobs multiplier', color: '#6B2FCC' }
+    ],
+    story: `<p>Los Angeles anchors the largest game industry cluster in the world. California accounts for 36,217 direct game jobs — nearly half of the national total — with LA County hosting the highest concentration. The city's game industry grew from Hollywood's creative infrastructure: animation schools, visual effects studios, music production, and a century-old entertainment talent pipeline all fed into gaming as the medium grew.</p>
+    <p>Riot Games, the studio behind League of Legends (the world's most-played PC game for over a decade), is headquartered in West LA. Activision Blizzard — now a Microsoft division — was based in Santa Monica, with its Call of Duty franchise generating over $30B lifetime. Naughty Dog (The Last of Us, Uncharted) and Sony's Santa Monica Studio (God of War) are the creative engines behind PlayStation's most celebrated exclusives.</p>
+    <p>LA's game industry benefits from proximity to Hollywood's motion capture studios, voice acting talent, composers, and concept artists. The crossover flows both ways: game cinematics routinely employ film-industry directors and composers. This creative density is difficult to replicate elsewhere and explains why California's game output ($52B total economic impact) is six times its nearest competitor.</p>
+    <p>The state's game-related university programs — at USC, UCLA, and a dense network of art schools — produce the industry's creative talent pipeline. California's dominance is structural, not accidental.</p>`,
+    timeline: [
+      { year: '1991', event: 'Naughty Dog founded in Santa Monica — later acquired by Sony' },
+      { year: '2003', event: 'Activision HQ established in Santa Monica; Call of Duty franchise launches' },
+      { year: '2006', event: 'Riot Games founded in West LA — League of Legends enters development' },
+      { year: '2009', event: 'League of Legends launches — becomes most-played PC game globally by 2012' },
+      { year: '2022', event: 'God of War: Ragnarök (Santa Monica Studio) wins GOTY; LA industry at peak creative output' }
+    ],
+    source: 'ESA 2026 Economic Impact Report · TEConomy IMPLAN'
+  },
+  {
+    id: 'austin-tx',
+    name: 'Austin, TX',
+    state: 'Texas',
+    lat: 30.267, lng: -97.743,
+    tag: 'The No-Tax Hub',
+    tagColor: '#F7941D',
+    headline: 'No income tax, no targeted incentive — how Texas built the nation\'s #3 game cluster through pure business climate',
+    stats: [
+      { n: '8,124', label: 'Direct game jobs in TX', color: '#F7941D' },
+      { n: '$6.3B', label: 'Economic output', color: '#F7941D' },
+      { n: '#3', label: 'U.S. game state by employment', color: '#F7941D' },
+      { n: '2.72×', label: 'Jobs multiplier', color: '#F7941D' }
+    ],
+    story: `<p>Texas built the nation's third-largest game employment cluster without a targeted game industry tax credit. The formula: no state income tax, low cost of living relative to California and the Pacific Northwest, and a business-friendly regulatory environment that has drawn tech companies from San Francisco, Seattle, and New York for over two decades.</p>
+    <p>Austin is the epicenter. id Software — the studio that invented the first-person shooter with Doom (1993) and Quake — has called the Dallas-Fort Worth area home since the early 1990s, later relocating to Dallas. Retro Studios, the Nintendo-owned developer behind the Metroid Prime trilogy, is based in Austin. Certain Affinity, a major co-developer for Halo and Call of Duty, operates from Austin. Gearbox Software, maker of the Borderlands franchise, is headquartered in Frisco.</p>
+    <p>What distinguishes Texas isn't a single anchor company — it's the accumulation of mid-tier and indie studios that relocated from higher-cost metros. Developers who left California studios in the post-2020 remote-work wave often chose Austin for its tech community, UT Austin's computer science pipeline, and the quality-of-life premium that $200K in game industry salary buys compared to Los Angeles or San Francisco.</p>
+    <p>Texas's 8,124 direct jobs and $6.3B in economic output represent a policy model: sometimes the absence of friction is more powerful than the presence of incentives.</p>`,
+    timeline: [
+      { year: '1991', event: 'id Software (Doom, Quake) operates from Mesquite, TX — shapes game history' },
+      { year: '1998', event: 'Retro Studios founded in Austin — Nintendo acquires 1999; Metroid Prime follows' },
+      { year: '2002', event: 'Gearbox Software founded in Garland — later Borderlands franchise (2009)' },
+      { year: '2012', event: 'Certain Affinity (Halo, CoD co-dev) established in Austin' },
+      { year: '2020–25', event: 'Post-pandemic relocation wave: dozens of CA studios open Austin offices or fully relocate' }
+    ],
+    source: 'ESA 2026 Economic Impact Report · TEConomy IMPLAN'
+  },
+  {
+    id: 'new-york-ny',
+    name: 'New York, NY',
+    state: 'New York',
+    lat: 40.713, lng: -74.006,
+    tag: 'The Publisher Hub',
+    tagColor: '#073DFF',
+    headline: 'Rockstar, Take-Two, and a thriving indie scene — New York proved games don\'t need a "tech city" to thrive',
+    stats: [
+      { n: '4,036', label: 'Direct game jobs in NY', color: '#073DFF' },
+      { n: '$4.4B', label: 'Economic output', color: '#073DFF' },
+      { n: '#4', label: 'U.S. game state by employment', color: '#073DFF' },
+      { n: '2.84×', label: 'Jobs multiplier (highest multiplier in Top 5)', color: '#073DFF' }
+    ],
+    story: `<p>New York City is the publishing capital of the U.S. video game industry. Take-Two Interactive — parent of Rockstar Games, 2K Games, and Private Division — is headquartered in Manhattan, as is its subsidiary Rockstar Games, which shipped the Grand Theft Auto series, Red Dead Redemption, and what remains the best-selling entertainment product in history: GTA V, with over 200 million copies sold.</p>
+    <p>New York's game industry is concentrated in publishing and business operations rather than development studios, which explains the state's notably high 2.84× jobs multiplier — among the highest of any major game state. Every publisher dollar spent in New York ripples through the city's finance, legal, marketing, media, and creative services ecosystem more effectively than in a tech-only market.</p>
+    <p>The city also hosts a vibrant indie scene, amplified by institutions like NYU Game Center (one of the world's most respected graduate game design programs) and events like the Game Developers Conference East. Developers who couldn't afford San Francisco found New York's diverse creative culture and investor access made it a viable alternative.</p>
+    <p>New York's game industry demonstrates that the industry's geography isn't limited to coastal tech hubs or purpose-built campuses. In a city that already exports culture globally, video games found a natural home alongside film, music, and publishing.</p>`,
+    timeline: [
+      { year: '1998', event: 'Rockstar Games founded in New York City by DMA Design alumni' },
+      { year: '2001', event: 'GTA III launches — redefines open-world games; Rockstar cements NYC as a game hub' },
+      { year: '2002', event: 'Take-Two Interactive consolidates its NYC headquarters' },
+      { year: '2008', event: 'NYU Game Center founded — becomes a world-leading game design graduate program' },
+      { year: '2013', event: 'GTA V launches — earns $800M in first 24 hours; becomes best-selling entertainment product ever' }
+    ],
+    source: 'ESA 2026 Economic Impact Report · TEConomy IMPLAN'
+  },
+  {
+    id: 'atlanta-ga',
+    name: 'Atlanta, GA',
+    state: 'Georgia',
+    lat: 33.749, lng: -84.388,
+    tag: 'The Rising Cluster',
+    tagColor: '#13EA9D',
+    headline: 'Georgia\'s 30% tax credit and a growing indie scene are building the South\'s first major game hub',
+    stats: [
+      { n: '1,386', label: 'Direct game jobs in GA', color: '#13EA9D' },
+      { n: '$1.15B', label: 'Economic output', color: '#13EA9D' },
+      { n: '2.95×', label: 'Jobs multiplier (top 10 nationally)', color: '#13EA9D' },
+      { n: '#9', label: 'U.S. game state — fastest-growing major cluster', color: '#13EA9D' }
+    ],
+    story: `<p>Atlanta is building the South's first major video game cluster, and Georgia's entertainment production tax credit is playing a central role. The state's 30% transferable tax credit — originally designed for the film industry that turned Atlanta into "Hollywood of the South" — applies to interactive entertainment, making Georgia one of the most incentive-competitive states in the country for new studio development.</p>
+    <p>Gearbox Software (Borderlands franchise) has a significant Atlanta presence. NCsoft, the Korean publisher behind Guild Wars and Lineage, operates a major North American development studio in Alpharetta. Hi-Rez Studios, creator of SMITE and Rogue Company, is headquartered in Alpharetta and employs hundreds. Electronic Arts has an Atlanta presence, and the city's growing tech sector has attracted smaller studios and remote developers from higher-cost markets.</p>
+    <p>Georgia State University, Kennesaw State, and Georgia Tech all run game design and computer science programs feeding the regional pipeline. The Atlanta metro's combination of film industry infrastructure (sound stages, motion capture facilities, voice talent) and gaming-specific programs creates a lower-friction path to game development than most non-coastal markets.</p>
+    <p>Georgia's 2.95× employment multiplier — one of the highest in the top 10 states — reflects how deeply game industry employment is weaving into Atlanta's broader creative and tech economy. Atlanta is the case study for how the next generation of U.S. game hubs will form: tax incentive + university pipeline + film infrastructure + affordable talent market.</p>`,
+    timeline: [
+      { year: '2005', event: 'Hi-Rez Studios founded in Alpharetta — SMITE becomes a top-10 esports title' },
+      { year: '2008', event: 'NCsoft North American studio expands to Atlanta metro (Alpharetta)' },
+      { year: '2012', event: 'Georgia film/interactive tax credit extended; studios begin citing GA incentives explicitly' },
+      { year: '2019', event: 'Atlanta named a top-10 emerging game hub by GDC developer survey' },
+      { year: '2025', event: 'Georgia game industry reaches $1.15B economic output; 2.95× multiplier leads Southeast' }
+    ],
+    source: 'ESA 2026 Economic Impact Report · TEConomy IMPLAN'
+  }
+];
+
+// ─── City view: render dots on map ────────────────────────────────────────
+let cityLayerActive = false;
+let cityDotsGroup = null;
+
+function renderCityDots() {
+  const svg = document.querySelector('#map-svg-container svg');
+  if (!svg) return;
+  // Remove existing
+  const old = svg.querySelector('#city-dots-group');
+  if (old) old.remove();
+
+  if (!cityLayerActive) return;
+
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.id = 'city-dots-group';
+
+  // Get projection from existing map (use same lng/lat → x/y logic)
+  // The map uses an Albers-like projection baked into D3 — we read it from existing state paths
+  const projection = window._mapProjection;
+  if (!projection) return;
+
+  CITY_STORIES.forEach(city => {
+    const [px, py] = projection([city.lng, city.lat]);
+    const clr = city.tagColor || '#13EA9D';
+
+    // Outer glow ring (slow pulse)
+    const glow = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    glow.setAttribute('cx', px);
+    glow.setAttribute('cy', py);
+    glow.setAttribute('r', 24);
+    glow.setAttribute('fill', clr);
+    glow.setAttribute('opacity', '0.10');
+    glow.setAttribute('pointer-events', 'none');
+    glow.style.animation = 'city-pulse-glow 3s ease-in-out infinite';
+    g.appendChild(glow);
+
+    // Inner pulse ring
+    const pulse = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    pulse.setAttribute('cx', px);
+    pulse.setAttribute('cy', py);
+    pulse.setAttribute('r', 16);
+    pulse.setAttribute('fill', 'none');
+    pulse.setAttribute('stroke', clr);
+    pulse.setAttribute('stroke-width', '2');
+    pulse.setAttribute('opacity', '0.5');
+    pulse.setAttribute('pointer-events', 'none');
+    pulse.style.animation = 'city-pulse 2s ease-in-out infinite';
+    g.appendChild(pulse);
+
+    // Main dot — larger and bolder
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx', px);
+    dot.setAttribute('cy', py);
+    dot.setAttribute('r', 11);
+    dot.setAttribute('fill', clr);
+    dot.setAttribute('stroke', '#ffffff');
+    dot.setAttribute('stroke-width', '2.5');
+    dot.style.cursor = 'pointer';
+    dot.style.filter = 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))';
+    dot.style.transition = 'r 0.15s ease, filter 0.15s ease';
+
+    // City label — larger with background pill
+    const labelBg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    const labelText = city.name.split(',')[0].toUpperCase();
+    const textW = labelText.length * 6.2 + 14;
+    labelBg.setAttribute('x', px + 16);
+    labelBg.setAttribute('y', py - 8);
+    labelBg.setAttribute('width', textW);
+    labelBg.setAttribute('height', 18);
+    labelBg.setAttribute('rx', 4);
+    labelBg.setAttribute('fill', '#ffffff');
+    labelBg.setAttribute('stroke', 'rgba(7,61,255,0.12)');
+    labelBg.setAttribute('stroke-width', '1');
+    labelBg.setAttribute('filter', 'drop-shadow(0 1px 3px rgba(0,0,0,0.12))');
+    labelBg.setAttribute('pointer-events', 'none');
+
+    const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+    label.setAttribute('x', px + 16 + 7);
+    label.setAttribute('y', py + 4);
+    label.setAttribute('font-size', '10');
+    label.setAttribute('font-family', "'DM Mono', monospace");
+    label.setAttribute('font-weight', '700');
+    label.setAttribute('fill', '#011456');
+    label.setAttribute('pointer-events', 'none');
+    label.textContent = labelText;
+
+    dot.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openCityPanel(city.id);
+    });
+    dot.addEventListener('mouseenter', () => {
+      dot.setAttribute('r', '14');
+      dot.style.filter = 'drop-shadow(0 3px 12px rgba(0,0,0,0.5))';
+    });
+    dot.addEventListener('mouseleave', () => {
+      dot.setAttribute('r', '11');
+      dot.style.filter = 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))';
+    });
+
+    g.appendChild(dot);
+    g.appendChild(labelBg);
+    g.appendChild(label);
+  });
+
+  svg.appendChild(g);
+  cityDotsGroup = g;
+}
+
+// ─── Open / close city panel ───────────────────────────────────────────────
+function openCityPanel(cityId) {
+  const city = CITY_STORIES.find(c => c.id === cityId);
+  if (!city) return;
+
+  // Close state panel if open
+  const statePanel = document.getElementById('state-slide-panel');
+  if (statePanel) statePanel.classList.remove('open');
+
+  const panel = document.getElementById('city-slide-panel');
+  document.getElementById('city-panel-name').textContent = city.name;
+  document.getElementById('city-panel-sub').textContent = city.state + ' · ' + city.tag;
+
+  // Build body HTML
+  const statsHtml = city.stats.map(s => `
+    <div style="background:rgba(1,20,86,0.03);border:1px solid rgba(1,20,86,0.08);border-radius:8px;padding:14px 16px;text-align:center;">
+      <div style="font-family:'DM Serif Display',serif;font-size:28px;font-weight:700;color:${s.color};line-height:1;margin-bottom:4px;">${s.n}</div>
+      <div style="font-size:12px;color:rgba(1,20,86,0.55);line-height:1.35;">${s.label}</div>
+    </div>`).join('');
+
+  const timelineHtml = city.timeline.map(t => `
+    <div style="display:flex;gap:16px;align-items:flex-start;">
+      <div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:${city.tagColor};flex-shrink:0;min-width:44px;padding-top:1px;">${t.year}</div>
+      <div style="font-size:13px;color:rgba(1,20,86,0.65);line-height:1.55;flex:1;border-left:2px solid rgba(1,20,86,0.08);padding-left:14px;">${t.event}</div>
+    </div>`).join('');
+
+  document.getElementById('city-panel-body').innerHTML = `
+    <!-- Hero tag -->
+    <div style="padding:20px 20px 0;margin-bottom:16px;">
+      <div style="display:inline-block;background:${city.tagColor}18;border:1px solid ${city.tagColor}44;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${city.tagColor};font-family:'DM Mono',monospace;margin-bottom:14px;">${city.tag}</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:20px;font-weight:700;color:#011456;line-height:1.3;margin-bottom:0;">"${city.headline}"</div>
+    </div>
+
+    <!-- Stats grid -->
+    <div style="padding:0 20px 20px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        ${statsHtml}
+      </div>
+    </div>
+
+    <div style="margin:0 20px 20px;height:1px;background:rgba(1,20,86,0.08);"></div>
+
+    <!-- Story text -->
+    <div style="padding:0 20px 20px;font-size:13px;color:rgba(1,20,86,0.7);line-height:1.75;">
+      ${city.story}
+    </div>
+
+    <div style="margin:0 20px 20px;height:1px;background:rgba(1,20,86,0.08);"></div>
+
+    <!-- Timeline -->
+    <div style="padding:0 20px 20px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(1,20,86,0.3);font-family:'DM Mono',monospace;margin-bottom:16px;">Timeline</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        ${timelineHtml}
+      </div>
+    </div>
+
+    <!-- Source -->
+    <div style="padding:12px 20px 28px;">
+      <div style="font-size:11px;color:rgba(1,20,86,0.3);font-style:italic;">Source: ${city.source}</div>
+    </div>
+  `;
+
+  // Open panel
+  panel.style.display = 'flex';
+  requestAnimationFrame(() => {
+    panel.style.transform = 'translateX(0)';
+    panel.style.opacity = '1';
+    panel.style.pointerEvents = 'all';
+  });
+}
+
+function closeCityPanel() {
+  const panel = document.getElementById('city-slide-panel');
+  panel.style.transform = 'translateX(100%)';
+  panel.style.opacity = '0';
+  panel.style.pointerEvents = 'none';
+  setTimeout(() => { panel.style.display = 'none'; }, 340);
+}
+
+// Add pulse keyframe if not present
+if (!document.getElementById('city-pulse-style')) {
+  const st = document.createElement('style');
+  st.id = 'city-pulse-style';
+  st.textContent = '@keyframes city-pulse { 0%,100%{r:16;opacity:0.5;} 50%{r:22;opacity:0.15;} } @keyframes city-pulse-glow { 0%,100%{r:24;opacity:0.10;} 50%{r:32;opacity:0.04;} }';
+  document.head.appendChild(st);
+}
+
+// ─── Wire up the City Stories view button ─────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  const cityBtn = document.getElementById('btn-city-stories');
+  if (!cityBtn) return;
+  cityBtn.addEventListener('click', function() {
+    // Switch to map view first
+    window.setView('map');
+    // Toggle city layer
+    cityLayerActive = !cityLayerActive;
+    // Use standard .active class like other view buttons
+    cityBtn.classList.toggle('active', cityLayerActive);
+    if (!cityLayerActive) {
+      closeCityPanel();
+    }
+    renderCityDots();
+  });
+});
+
+// Re-render city dots after map initialises (projection available)
+const _origInitMap = window.initMap;
+window.addEventListener('load', function() {
+  // Patch: whenever the map SVG is drawn, store the projection
+  const checkProjection = setInterval(function() {
+    if (window._mapProjection) {
+      clearInterval(checkProjection);
+      if (cityLayerActive) renderCityDots();
+    }
+  }, 300);
+});
 
 </script>
 
